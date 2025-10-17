@@ -11,7 +11,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
     exit;
 }
 
-// Валидация данных книги
+// Р¤СѓРЅРєС†РёСЏ РІР°Р»РёРґР°С†РёРё РґР°РЅРЅС‹С…
 function validateBook($data) {
     $errors = [];
 
@@ -26,14 +26,18 @@ function validateBook($data) {
     if (!isset($data['pages']) || !is_numeric($data['pages']) || $data['pages'] <= 0) {
         $errors[] = 'Pages must be a positive number';
     }
-
+    
+    // Р’РђР›РР”РђР¦РРЇ PRICE Р RATE
+    if (!isset($data['price']) || !is_numeric($data['price']) || $data['price'] < 0) {
+        $errors[] = 'Price must be a non-negative number';
+    }
+    
+    if (!isset($data['rate']) || !is_numeric($data['rate']) || $data['rate'] < 0 || $data['rate'] > 5) {
+        $errors[] = 'Rate must be a number between 0 and 5';
+    }
+    
     if (empty($data['published_date']) || !preg_match('/^\d{4}-\d{2}-\d{2}$/', $data['published_date'])) {
         $errors[] = 'Invalid date format';
-    }
-
-    // Проверка: дата не может быть в будущем
-    if (!empty($data['published_date']) && strtotime($data['published_date']) > time()) {
-        $errors[] = 'Published date cannot be in the future';
     }
 
     return $errors;
@@ -44,18 +48,12 @@ $method = $_SERVER['REQUEST_METHOD'];
 switch ($method) {
     case 'GET':
         if (isset($_GET['id'])) {
-            $stmt = $pdo->prepare("SELECT * FROM books WHERE id = ?");
+            $stmt = $pdo->prepare('SELECT id, title, author, pages, published_date, price, rate FROM books WHERE id = ?');
             $stmt->execute([$_GET['id']]);
-            $book = $stmt->fetch(PDO::FETCH_ASSOC);
-            if ($book) {
-                echo json_encode($book);
-            } else {
-                http_response_code(404);
-                echo json_encode(['error' => 'Book not found']);
-            }
+            echo json_encode($stmt->fetch());
         } else {
-            $stmt = $pdo->query("SELECT * FROM books");
-            echo json_encode($stmt->fetchAll(PDO::FETCH_ASSOC));
+            $stmt = $pdo->query('SELECT id, title, author, pages, published_date, price, rate FROM books');
+            echo json_encode($stmt->fetchAll());
         }
         break;
 
@@ -68,8 +66,8 @@ switch ($method) {
             exit;
         }
 
-        $stmt = $pdo->prepare("INSERT INTO books (title, author, pages, published_date) VALUES (?, ?, ?, ?)");
-        $stmt->execute([$data['title'], $data['author'], $data['pages'], $data['published_date']]);
+        $stmt = $pdo->prepare("INSERT INTO books (title, author, pages, published_date, price, rate) VALUES (?, ?, ?, ?, ?, ?)");
+        $stmt->execute([$data['title'], $data['author'], $data['pages'], $data['published_date'], $data['price'], $data['rate']]);
         echo json_encode(['id' => $pdo->lastInsertId()]);
         break;
 
@@ -84,18 +82,18 @@ switch ($method) {
             exit;
         }
 
-        $stmt = $pdo->prepare("UPDATE books SET title=?, author=?, pages=?, published_date=? WHERE id=?");
-        $stmt->execute([$data['title'], $data['author'], $data['pages'], $data['published_date'], $id]);
+        $stmt = $pdo->prepare("UPDATE books SET title=?, author=?, pages=?, published_date=?, price=?, rate=? WHERE id=?");
+        $stmt->execute([$data['title'], $data['author'], $data['pages'], $data['published_date'], $data['price'], $data['rate'], $id]);
         echo json_encode(['message' => 'Updated']);
         break;
 
     case 'DELETE':
         if (!isset($_GET['id'])) { http_response_code(400); exit; }
-        $stmt = $pdo->prepare("DELETE FROM books WHERE id = ?");
+        $stmt = $pdo->prepare('DELETE FROM books WHERE id = ?');
         $stmt->execute([$_GET['id']]);
         echo json_encode(['message' => 'Deleted']);
         break;
-
+        
     default:
         http_response_code(405);
         echo json_encode(['error' => 'Method not allowed']);
