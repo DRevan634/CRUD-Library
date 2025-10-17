@@ -23,3 +23,5 @@ Installation
    ('The Great Gatsby', 'F. Scott Fitzgerald', 218, '1925-04-10'),
    ('To Kill a Mockingbird', 'Harper Lee', 281, '1960-07-11'),
    ('1984', 'George Orwell', 328, '1949-06-08');
+
+   ![preview](https://github.com/DRevan634/CRUD-Library/blob/main/preview.png?raw=true)
