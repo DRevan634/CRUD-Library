@@ -24,4 +24,4 @@ Installation
    ('To Kill a Mockingbird', 'Harper Lee', 281, '1960-07-11'),
    ('1984', 'George Orwell', 328, '1949-06-08');
 
-   ![preview](https://github.com/DRevan634/CRUD-Library/blob/62e7c0e8959376cd8da0155d7023a739ce052f3a/preview.png)
+   ![preview](preview.png)
