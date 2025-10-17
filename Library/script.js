@@ -7,10 +7,14 @@ async function load() {
     table.innerHTML = '';
 
     books.forEach(b => {
+        const price = b.price ?? 0;
+        const rate = b.rate ?? 0;
         const tr = document.createElement('tr');
         tr.innerHTML = `
       <td>${b.id}</td>
       <td>${b.title}</td>
+      <td>${price}</td>
+      <td>${rate}</td>
       <td>${b.author}</td>
       <td>${b.pages}</td>
       <td>${b.published_date}</td>
@@ -30,7 +34,9 @@ async function saveBook() {
         title: document.getElementById('title').value,
         author: document.getElementById('author').value,
         pages: Number(document.getElementById('pages').value),
-        published_date: document.getElementById('date').value
+        published_date: document.getElementById('date').value,
+        price: Number(document.getElementById('price').value),
+        rate: Number(document.getElementById('rate').value)
     };
 
     const res = await fetch(API, {
@@ -61,6 +67,8 @@ function clearForm() {
     document.getElementById('author').value = '';
     document.getElementById('pages').value = '';
     document.getElementById('date').value = '';
+    document.getElementById('price').value = '';
+    document.getElementById('rate').value = '';
 }
 
 function showAlert(errors) {

@@ -16,6 +16,8 @@ async function loadBook() {
 
     const book = await res.json();
     document.getElementById('title').value = book.title;
+    document.getElementById('price').value = book.price;
+    document.getElementById('rate').value = book.rate;
     document.getElementById('author').value = book.author;
     document.getElementById('pages').value = book.pages;
     document.getElementById('date').value = book.published_date;
@@ -29,7 +31,9 @@ async function updateBook(e) {
         title: document.getElementById('title').value,
         author: document.getElementById('author').value,
         pages: Number(document.getElementById('pages').value),
-        published_date: document.getElementById('date').value
+        published_date: document.getElementById('date').value,
+        price: Number(document.getElementById('price').value),
+        rate: Number(document.getElementById('rate').value)
     };
 
     const res = await fetch(`${API}?id=${bookId}`, {
